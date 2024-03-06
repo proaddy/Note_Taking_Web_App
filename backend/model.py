@@ -6,3 +6,4 @@ class Note(BaseModel):
     heading: str
     content: str
     color: str = None
+    folder: str

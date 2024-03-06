@@ -106,7 +106,18 @@ export default function App() {
                 </>
             )}
             <div>
-                <NoteList sortorder={sortOrder} notes={noteList} onclick={deleteNote} filterText={filterText}/>
+                {/* <NoteList sortorder={sortOrder} notes={noteList} onclick={deleteNote} filterText={filterText}/> */}
+            </div>
+            {/* Experimental Code */}
+            <div className="flex items-start">
+                <div className="border border-black h-dvh w-64">
+                    <FolderList noteList={noteList} showHeading={setShowHeading} showContent={setShowContent}/>
+                </div>
+                <div className="flex flex-col">
+                    <input className="m-1 p-1 border border-black" type="text" value={`${showHeading}`}/>
+                    <textarea className="m-1 p-1 border border-black" cols="30" rows="10" value={`${showContent}`}></textarea>
+                </div>
+                <button>Update</button>
             </div>
         </div>
     );
