@@ -1,4 +1,5 @@
 from model import Note
+from model import Folder
 
 # mongoDB Driver
 import motor.motor_asyncio
@@ -9,6 +10,8 @@ client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://localhost:27017')
 database = client.Notes
 noteCollection = database.note
 folderCollection = database.folder
+
+################### NOTES ###################
 
 # Create
 async def create_note(note:Note):
@@ -43,3 +46,24 @@ we get the actual value of delete_one function which is
 no of documents deleted
 result.deleted_count
 '''
+
+################### FOLDER ###################
+
+# Create
+async def create_folder(folder:Folder):
+    folder = folder
+    result = await folderCollection.insert_one(folder)
+    return {"Result":result}
+
+# Read
+async def read_all_folder():
+    Folders = []
+    result = folderCollection.find({})
+    async for document in result:
+        Folders.append(Folder(**document))
+    return Folders
+
+# Delete
+async def delete_folder(name):
+    result = await folderCollection.delete_one({"name":name})
+    return result

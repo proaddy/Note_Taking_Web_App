@@ -1,10 +1,15 @@
 import Folder from "./Folder";
 
-export default function FolderList({noteList, showHeading, showContent}) {
+export default function FolderList({setLocation, deletenote, deleteFolder, noteList, folderList, showHeading, showContent}) {
     return (
         <div>
-            <Folder noteList={noteList} folderName={"Folder 1"}/>
-            <Folder noteList={noteList} folderName={"Folder 2"}/>
+            {
+                folderList.filter((folder)=>folder.path === '/').map((folder)=>{
+                    return (
+                        <Folder setLocation={setLocation} deleteNote={deletenote} deleteFolder={deleteFolder} key={folder.name} showHeading={showHeading} showContent={showContent} noteList={noteList} folderName={folder.name}/>
+                        )
+                    })
+            }
         </div>
     );
 }

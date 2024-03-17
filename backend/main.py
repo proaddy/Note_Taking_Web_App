@@ -1,12 +1,15 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from model import Note
+from model import Note, Folder
 from database import (
     create_note,
     read_one_note,
     read_all_notes,
     update_note,
-    delete_note
+    delete_note, 
+    create_folder,
+    read_all_folder,
+    delete_folder
 )
 
 app = FastAPI()
@@ -20,6 +23,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+################### NOTES ###################
 
 @app.get('/')
 def root():
@@ -54,6 +59,27 @@ async def edit_note(heading: str, content:str):
 @app.delete('/note/delete/{heading}')
 async def del_notes(heading):
     response = await delete_note(heading)
+    if response:
+        return "Successfully Deleted"
+    raise HTTPException(404, "Note not found to delete")
+
+################### FOLDER ###################
+
+@app.post('/folder/')
+async def make_folder(folder:Folder):
+    response = await create_folder(folder.model_dump())
+    if response:
+        return {"response":response}
+    raise HTTPException(400, "Bad Request!!!")
+
+@app.get('/folder/')
+async def get_folder():
+    response = await read_all_folder()
+    return response
+
+@app.delete('/folder/delete/{name}')
+async def del_folder(name):
+    response = await delete_folder(name)
     if response:
         return "Successfully Deleted"
     raise HTTPException(404, "Note not found to delete")
