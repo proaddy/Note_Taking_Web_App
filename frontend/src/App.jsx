@@ -21,6 +21,7 @@ export default function App() {
     const [noteColor, setNoteColor] = useState("");
 
     const [folder, setFolder] = useState('');
+    const [subFolder, setSubFolder] = useState('/');
     const [noteLocation, setNoteLocation] = useState('');
 
     useEffect(() => {
@@ -78,16 +79,16 @@ export default function App() {
         // console.log(heading, typeof(heading))
     }
 
-    const addFolder = (foldername) => {
+    const addFolder = (foldername, path) => {
         if (foldername !== "") {
             try {
                 axios.post("http://127.0.0.1:8000/folder/", {
                     name: foldername.trim(),
-                    path: '/'
+                    path: path
                 });
                 setFolderList([
                     ...folderList,
-                    { name: foldername.trim(), path: '/' }
+                    { name: foldername.trim(), path: path }
                 ]);
             } catch (error) {
                 console.log("Error adding folder", error);
@@ -109,9 +110,15 @@ export default function App() {
         }
     };
 
-    const setlocation = async (location) => {
+    const setlocation = async (path, name) => {
+        path === '/' ? setNoteLocation(`${path}${name}`):setNoteLocation(`${path}/${name}`)
         setShowAddNote(!showAddNote)
-        setNoteLocation(location)
+    }
+
+    const setsfolder = async (folder) => {
+        // console.log(folder)
+        setSubFolder(`${folder.path}/${folder.name}`)
+        setShowFolderAdd(!showFolderAdd);
     }
 
     return (
@@ -125,13 +132,13 @@ export default function App() {
                 {showFolderAdd && 
                     <div className="m-1">
                         <input className="p-4" type="text" onChange={(e)=>setFolder(e.target.value)} placeholder="Enter folder name..." />
-                        <button onClick={()=>addFolder(folder)} className="bg-slate-500 rounded-md text-white p-3">Confirm</button>
+                        <button onClick={()=>addFolder(folder, subFolder)} className="bg-slate-500 rounded-md text-white p-3">Confirm</button>
                     </div>
                 }
                 
                 <div className="flex items-start">
                     <div className="flex flex-col w-full">
-                        <FolderList setLocation={setlocation} deletenote={deleteNote} deleteFolder={deleteFolder} noteList={noteList} folderList={folderList} showHeading={setShowHeading} showContent={setShowContent}/>
+                        <FolderList setSFolder={setsfolder} setLocation={setlocation} deletenote={deleteNote} deleteFolder={deleteFolder} noteList={noteList} folderList={folderList} showHeading={setShowHeading} showContent={setShowContent}/>
                     </div>
                 </div>
                 <button onClick={()=>setShowFolderAdd(!showFolderAdd)} className="bg-slate-500 rounded-md text-white p-3 w-44 fixed bottom-4 left-16">Add folder</button>

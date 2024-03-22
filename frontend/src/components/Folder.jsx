@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Folder({setLocation, deleteNote, deleteFolder, noteList, folderName, showHeading, showContent}) {
+export default function Folder({setSFolder, setLocation, deleteNote, deleteFolder, noteList, folderList, folder, showHeading, showContent}) {
     const [showFolder, setShowFolder] = useState(false);
 
     let rotate = "";
@@ -11,28 +11,39 @@ export default function Folder({setLocation, deleteNote, deleteFolder, noteList,
     } else {
         rotate = "rotate-180";
     }
+    let folderFilter = folder.path === '/' ? `${folder.path}${folder.name}`.toLowerCase():`${folder.path}/${folder.name}`.toLowerCase();
     return (
         <>
             <div className="flex justify-between">
                 <div onClick={() => setShowFolder(!showFolder)} className="flex items-center cursor-pointer border-b-2">
                     <img src="/less-than.png" className={`h-5 ${rotate}`} />
                     <img src="/folder.png" className="h-8" />
-                    <span className="pl-2">{folderName}</span>
+                    <span className="pl-2">{folder.name}</span>
                 </div>
                 <div className="flex self-center">
-                    <img src="/add-post.png" onClick={()=>setLocation(folderName)} className="h-5 pr-3 opacity-50" />
+                    <img src="/add-post.png" onClick={()=>setLocation(folder.path, folder.name)} className="h-5 pr-2 opacity-50" />
+                    <img src="/folder-add.png" onClick={()=>setSFolder(folder)} className="h-6 pr-2 opacity-80"/>
                     <img
                         src="/folder-delete.png"
-                        onClick={() => deleteFolder(folderName)}
+                        onClick={() => deleteFolder(folder.name)}
                         className="h-5"
                     />
                 </div>
             </div>
             <div>
                 {showFolder && (
+                    <>
+                    <div className="pl-7">
+                        {folderList.filter((fol)=>fol.path.toLowerCase() === folderFilter).map((folder)=>{
+                            return (
+                                <Folder folder={folder} setSFolder={setSFolder} setLocation={setLocation} deleteNote={deleteNote} deleteFolder={deleteFolder} key={folder.name} showHeading={showHeading} showContent={showContent} noteList={noteList} folderList={folderList}/>
+                                )
+                            })
+                        }
+                    </div>
                     <div>
                         {noteList
-                            .filter((note) => note.folder.toLowerCase() === folderName.toLowerCase())
+                            .filter((note) => note.folder.toLowerCase() === folderFilter)
                             .map((note) => {
                                 if (!note.color) {
                                     color = "default";
@@ -53,6 +64,7 @@ export default function Folder({setLocation, deleteNote, deleteFolder, noteList,
                                 );
                             })}
                     </div>
+                    </>
                 )}
             </div>
         </>
